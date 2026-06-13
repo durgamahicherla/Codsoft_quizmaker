@@ -15,7 +15,7 @@ This repository contains my Level 2 projects completed during the CodSoft Web De
 A fully responsive job portal where users can browse jobs, apply, and manage applications.
 
 📁 Folder: job-board/
-🔗 Live Demo: [your-netlify-link-1] ← Replace with your link
+🔗 Live Demo: https://durgamahicherla.github.io/Codsoft_quizmaker/
 
 Pages:
 
