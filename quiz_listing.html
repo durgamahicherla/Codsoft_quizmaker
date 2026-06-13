@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Quizzes – QuizCraft</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    :root { --primary:#0a0a0a; --accent:#7c3aed; --accent2:#06b6d4; --accent3:#f59e0b; --surface:#141414; --surface2:#1e1e1e; --text:#f5f5f5; --muted:#888; --border:#2a2a2a; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--primary); color:var(--text); font-family:'DM Sans',sans-serif; }
+    h1,h2,h3 { font-family:'Syne',sans-serif; }
+    .navbar { background:rgba(10,10,10,0.95); border-bottom:1px solid var(--border); backdrop-filter:blur(10px); padding:1rem 0; position:sticky; top:0; z-index:999; }
+    .navbar-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; color:var(--text)!important; letter-spacing:-1px; }
+    .navbar-brand span { color:var(--accent); }
+    .nav-link { color:var(--muted)!important; font-weight:500; }
+    .nav-link:hover { color:var(--accent)!important; }
+    .btn-accent { background:var(--accent); color:#fff; font-weight:700; border:none; padding:0.5rem 1.4rem; border-radius:6px; font-family:'Syne',sans-serif; transition:transform 0.2s; cursor:pointer; text-decoration:none; display:inline-block; }
+    .btn-accent:hover { transform:translateY(-2px); color:#fff; }
+    .btn-outline-accent { border:1.5px solid var(--accent); color:var(--accent); background:transparent; padding:0.5rem 1.2rem; border-radius:6px; font-family:'Syne',sans-serif; font-weight:600; transition:all 0.2s; cursor:pointer; }
+    .btn-outline-accent:hover { background:var(--accent); color:#fff; }
+
+    .page-header { background:var(--surface); border-bottom:1px solid var(--border); padding:2.5rem 0; }
+    .search-bar { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:0.4rem; display:flex; gap:0.5rem; max-width:500px; }
+    .search-bar input { background:transparent; border:none; color:var(--text); padding:0.6rem 1rem; flex:1; outline:none; font-family:'DM Sans',sans-serif; }
+    .search-bar input::placeholder { color:var(--muted); }
+
+    .filter-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:1.2rem; }
+    .filter-tab { padding:0.4rem 1rem; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; border:1px solid var(--border); color:var(--muted); background:transparent; transition:all 0.2s; }
+    .filter-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .filter-tab:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
+
+    .quiz-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:all 0.2s; height:100%; }
+    .quiz-card:hover { border-color:var(--accent); transform:translateY(-4px); }
+    .quiz-cat { display:inline-block; padding:0.25rem 0.7rem; border-radius:4px; font-size:0.75rem; font-weight:600; margin-bottom:0.8rem; }
+    .cat-science { background:rgba(124,58,237,0.1); color:var(--accent); border:1px solid rgba(124,58,237,0.2); }
+    .cat-tech { background:rgba(6,182,212,0.1); color:var(--accent2); border:1px solid rgba(6,182,212,0.2); }
+    .cat-general { background:rgba(245,158,11,0.1); color:var(--accent3); border:1px solid rgba(245,158,11,0.2); }
+    .cat-math { background:rgba(20,240,160,0.1); color:#14f0a0; border:1px solid rgba(20,240,160,0.2); }
+    .cat-history { background:rgba(248,113,113,0.1); color:#f87171; border:1px solid rgba(248,113,113,0.2); }
+    .quiz-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; margin-bottom:0.4rem; }
+    .quiz-desc { color:var(--muted); font-size:0.85rem; line-height:1.5; margin-bottom:1rem; }
+    .quiz-footer { display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top:1px solid var(--border); }
+    .diff-easy { color:#14f0a0; font-size:0.8rem; font-weight:600; }
+    .diff-medium { color:var(--accent3); font-size:0.8rem; font-weight:600; }
+    .diff-hard { color:#f87171; font-size:0.8rem; font-weight:600; }
+
+    footer { background:var(--primary); border-top:1px solid var(--border); padding:1.5rem 0; text-align:center; color:var(--muted); font-size:0.85rem; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="quiz_index.html">Quiz<span>Craft</span></a>
+    <button class="navbar-toggler border-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+        <li class="nav-item"><a class="nav-link active" style="color:var(--accent)!important" href="quiz_listing.html">Browse Quizzes</a></li>
+        <li class="nav-item"><a class="nav-link" href="quiz_create.html">Create Quiz</a></li>
+        <li class="nav-item ms-2"><a href="quiz_login.html" class="btn btn-outline-accent btn-sm">Login</a></li>
+        <li class="nav-item"><a href="quiz_create.html" class="btn btn-accent btn-sm">+ Create</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <h1 style="font-size:2rem;font-weight:800;letter-spacing:-1px;margin-bottom:1rem;">Browse Quizzes</h1>
+    <div class="search-bar">
+      <i class="bi bi-search" style="color:var(--muted);padding:0.6rem 0.5rem 0.6rem 0.8rem;"></i>
+      <input type="text" id="searchInput" placeholder="Search quizzes..." oninput="filterQuizzes()"/>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter(this,'All')">All</button>
+      <button class="filter-tab" onclick="setFilter(this,'Technology')">💻 Technology</button>
+      <button class="filter-tab" onclick="setFilter(this,'Science')">🔬 Science</button>
+      <button class="filter-tab" onclick="setFilter(this,'Geography')">🌍 Geography</button>
+      <button class="filter-tab" onclick="setFilter(this,'Mathematics')">📐 Mathematics</button>
+      <button class="filter-tab" onclick="setFilter(this,'History')">📜 History</button>
+      <button class="filter-tab" onclick="setFilter(this,'General')">🎯 General</button>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div style="color:var(--muted);font-size:0.9rem;">Showing <span id="resultCount" style="color:var(--accent);font-weight:700;">0</span> quizzes</div>
+    <select style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.8rem;border-radius:6px;outline:none;" onchange="filterQuizzes()">
+      <option>Most Popular</option>
+      <option>Newest First</option>
+      <option>Easiest First</option>
+    </select>
+  </div>
+  <div class="row g-4" id="quizGrid"></div>
+</div>
+
+<footer>
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:0.5rem;">Quiz<span style="color:var(--accent)">Craft</span></div>
+  © 2024 QuizCraft. Built for CodSoft Internship.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const QUIZZES = [
+  { id:1, title:"General Science Quiz", category:"Science", catClass:"cat-science", desc:"Test your knowledge of basic science concepts.", questions:5, time:"5 mins", taken:234, difficulty:"Easy", diffClass:"diff-easy" },
+  { id:2, title:"Python Basics Quiz", category:"Technology", catClass:"cat-tech", desc:"Test your Python programming fundamentals.", questions:5, time:"4 mins", taken:187, difficulty:"Medium", diffClass:"diff-medium" },
+  { id:3, title:"World Geography", category:"Geography", catClass:"cat-general", desc:"How well do you know the world's countries and capitals?", questions:5, time:"6 mins", taken:312, difficulty:"Medium", diffClass:"diff-medium" },
+  { id:4, title:"Basic Mathematics", category:"Mathematics", catClass:"cat-math", desc:"Solve basic math problems and equations.", questions:5, time:"5 mins", taken:156, difficulty:"Hard", diffClass:"diff-hard" },
+  { id:5, title:"Indian History", category:"History", catClass:"cat-history", desc:"Test your knowledge of Indian history and culture.", questions:10, time:"8 mins", taken:98, difficulty:"Medium", diffClass:"diff-medium" },
+  { id:6, title:"JavaScript Basics", category:"Technology", catClass:"cat-tech", desc:"Test your JavaScript programming knowledge.", questions:8, time:"6 mins", taken:143, difficulty:"Easy", diffClass:"diff-easy" },
+  { id:7, title:"General Knowledge", category:"General", catClass:"cat-general", desc:"A mix of questions from various topics.", questions:15, time:"10 mins", taken:421, difficulty:"Easy", diffClass:"diff-easy" },
+  { id:8, title:"Space & Astronomy", category:"Science", catClass:"cat-science", desc:"How well do you know our universe?", questions:10, time:"7 mins", taken:76, difficulty:"Hard", diffClass:"diff-hard" },
+];
+
+let activeFilter = 'All';
+
+function setFilter(btn, filter) {
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = filter;
+  filterQuizzes();
+}
+
+function filterQuizzes() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = QUIZZES.filter(quiz => {
+    const matchSearch = !q || quiz.title.toLowerCase().includes(q) || quiz.category.toLowerCase().includes(q);
+    const matchFilter = activeFilter === 'All' || quiz.category === activeFilter;
+    return matchSearch && matchFilter;
+  });
+
+  document.getElementById('resultCount').textContent = filtered.length;
+  const grid = document.getElementById('quizGrid');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="col-12 text-center py-5" style="color:var(--muted);"><i class="bi bi-search" style="font-size:3rem;display:block;margin-bottom:1rem;"></i>No quizzes found.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(quiz => `
+    <div class="col-md-6 col-lg-4 col-xl-3">
+      <div class="quiz-card">
+        <span class="quiz-cat ${quiz.catClass}">${quiz.category}</span>
+        <div class="quiz-title">${quiz.title}</div>
+        <div class="quiz-desc">${quiz.desc}</div>
+        <div style="display:flex;gap:1rem;font-size:0.82rem;color:var(--muted);margin-bottom:1rem;">
+          <span>📝 ${quiz.questions} Qs</span>
+          <span>⏱ ${quiz.time}</span>
+          <span>👥 ${quiz.taken} taken</span>
+        </div>
+        <div class="quiz-footer">
+          <span class="${quiz.diffClass}">● ${quiz.difficulty}</span>
+          <a href="quiz_take.html?id=${quiz.id}" class="btn-accent btn-sm" style="padding:0.4rem 1rem;font-size:0.85rem;text-decoration:none;">Start →</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+filterQuizzes();
+</script>
+</body>
+</html>

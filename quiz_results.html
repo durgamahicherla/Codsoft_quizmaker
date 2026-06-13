@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Results – QuizCraft</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    :root { --primary:#0a0a0a; --accent:#7c3aed; --accent2:#06b6d4; --accent3:#f59e0b; --surface:#141414; --surface2:#1e1e1e; --text:#f5f5f5; --muted:#888; --border:#2a2a2a; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--primary); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    h1,h2,h3 { font-family:'Syne',sans-serif; }
+    .navbar { background:rgba(10,10,10,0.95); border-bottom:1px solid var(--border); backdrop-filter:blur(10px); padding:1rem 0; }
+    .navbar-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; color:var(--text)!important; letter-spacing:-1px; }
+    .navbar-brand span { color:var(--accent); }
+    .btn-accent { background:var(--accent); color:#fff; font-weight:700; border:none; padding:0.7rem 1.8rem; border-radius:8px; font-family:'Syne',sans-serif; transition:transform 0.2s; cursor:pointer; text-decoration:none; display:inline-block; }
+    .btn-accent:hover { transform:translateY(-2px); color:#fff; }
+    .btn-outline-accent { border:1.5px solid var(--accent); color:var(--accent); background:transparent; padding:0.7rem 1.8rem; border-radius:8px; font-family:'Syne',sans-serif; font-weight:600; transition:all 0.2s; text-decoration:none; display:inline-block; }
+    .btn-outline-accent:hover { background:var(--accent); color:#fff; }
+
+    .results-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:3rem 1rem; }
+    .results-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:3rem 2.5rem; width:100%; max-width:600px; text-align:center; }
+
+    /* SCORE CIRCLE */
+    .score-circle { position:relative; width:160px; height:160px; margin:0 auto 2rem; }
+    .score-circle svg { transform:rotate(-90deg); }
+    .score-circle-bg { fill:none; stroke:var(--surface2); stroke-width:10; }
+    .score-circle-fill { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1s ease; }
+    .score-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .score-pct { font-family:'Syne',sans-serif; font-size:2.5rem; font-weight:800; line-height:1; }
+    .score-label { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.2rem; }
+
+    /* STATS ROW */
+    .stats-row { display:flex; gap:1rem; justify-content:center; margin:2rem 0; flex-wrap:wrap; }
+    .stat-box { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:1rem 1.5rem; flex:1; min-width:100px; }
+    .stat-val { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; }
+    .stat-lbl { font-size:0.78rem; color:var(--muted); margin-top:0.2rem; }
+
+    /* GRADE */
+    .grade-badge { display:inline-block; padding:0.5rem 2rem; border-radius:50px; font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; margin-bottom:1rem; }
+
+    footer { background:var(--primary); border-top:1px solid var(--border); padding:1.5rem 0; text-align:center; color:var(--muted); font-size:0.85rem; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a class="navbar-brand" href="quiz_index.html">Quiz<span>Craft</span></a>
+  </div>
+</nav>
+
+<div class="results-wrap">
+  <div class="results-card" id="resultsCard">
+    <div style="font-size:2.5rem;margin-bottom:1rem;" id="resultEmoji">🎉</div>
+    <h1 style="font-size:1.8rem;letter-spacing:-0.5px;margin-bottom:0.3rem;" id="resultTitle">Quiz Complete!</h1>
+    <div style="color:var(--muted);margin-bottom:2rem;" id="quizTitleResult"></div>
+
+    <!-- Score Circle -->
+    <div class="score-circle">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="score-circle-bg" cx="80" cy="80" r="70"/>
+        <circle class="score-circle-fill" id="scoreCircleFill" cx="80" cy="80" r="70" stroke-dasharray="440" stroke-dashoffset="440"/>
+      </svg>
+      <div class="score-text">
+        <div class="score-pct" id="scorePct">0%</div>
+        <div class="score-label">Score</div>
+      </div>
+    </div>
+
+    <div class="grade-badge" id="gradeBadge"></div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" style="color:#14f0a0;" id="correctVal">0</div>
+        <div class="stat-lbl">✅ Correct</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:#f87171;" id="wrongVal">0</div>
+        <div class="stat-lbl">❌ Wrong</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--accent3);" id="timeVal">0s</div>
+        <div class="stat-lbl">⏱ Time</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--accent2);" id="totalVal">0</div>
+        <div class="stat-lbl">📝 Total</div>
+      </div>
+    </div>
+
+    <p id="resultMsg" style="color:var(--muted);font-size:0.92rem;margin-bottom:2rem;"></p>
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="quiz_listing.html" class="btn-accent">🎮 Try Another Quiz</a>
+      <a href="quiz_index.html" class="btn-outline-accent">🏠 Home</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:0.5rem;">Quiz<span style="color:var(--accent)">Craft</span></div>
+  © 2024 QuizCraft. Built for CodSoft Internship.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const result = JSON.parse(sessionStorage.getItem('quizResult') || '{"title":"Quiz","score":4,"total":5,"pct":80,"wrong":1,"timeTaken":120}');
+
+document.getElementById('quizTitleResult').textContent = result.title;
+document.getElementById('scorePct').textContent = result.pct + '%';
+document.getElementById('correctVal').textContent = result.score;
+document.getElementById('wrongVal').textContent = result.wrong;
+document.getElementById('totalVal').textContent = result.total;
+const min = Math.floor(result.timeTaken/60);
+const sec = result.timeTaken%60;
+document.getElementById('timeVal').textContent = min > 0 ? `${min}m ${sec}s` : `${sec}s`;
+
+// Grade
+let grade, color, emoji, msg;
+if (result.pct >= 90) { grade='A+'; color='#14f0a0'; emoji='🏆'; msg="Outstanding! You're a genius!"; }
+else if (result.pct >= 80) { grade='A'; color='#14f0a0'; emoji='🎉'; msg="Excellent work! You really know your stuff!"; }
+else if (result.pct >= 70) { grade='B'; color='var(--accent2)'; emoji='👍'; msg="Great job! You did really well!"; }
+else if (result.pct >= 60) { grade='C'; color='var(--accent3)'; emoji='😊'; msg="Good effort! Keep practicing to improve!"; }
+else { grade='F'; color='#f87171'; emoji='😔'; msg="Don't give up! Try again and you'll do better!"; }
+
+document.getElementById('resultEmoji').textContent = emoji;
+document.getElementById('gradeBadge').textContent = `Grade: ${grade}`;
+document.getElementById('gradeBadge').style.cssText = `background:rgba(124,58,237,0.1);border:2px solid ${color};color:${color};display:inline-block;padding:0.5rem 2rem;border-radius:50px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:1rem;`;
+document.getElementById('resultMsg').textContent = msg;
+
+// Animate circle
+const pct = result.pct;
+const circumference = 440;
+const offset = circumference - (pct/100)*circumference;
+const fill = document.getElementById('scoreCircleFill');
+fill.style.stroke = color;
+setTimeout(() => fill.style.strokeDashoffset = offset, 300);
+</script>
+</body>
+</html>

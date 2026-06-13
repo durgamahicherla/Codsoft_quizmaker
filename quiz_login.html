@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register – QuizCraft</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    :root { --primary:#0a0a0a; --accent:#7c3aed; --accent2:#06b6d4; --surface:#141414; --surface2:#1e1e1e; --text:#f5f5f5; --muted:#888; --border:#2a2a2a; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--primary); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    h1,h2,h3 { font-family:'Syne',sans-serif; }
+    .navbar { background:rgba(10,10,10,0.95); border-bottom:1px solid var(--border); padding:1rem 0; }
+    .navbar-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; color:var(--text)!important; letter-spacing:-1px; }
+    .navbar-brand span { color:var(--accent); }
+    .auth-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:3rem 1rem; position:relative; overflow:hidden; }
+    .auth-wrap::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 30%, rgba(124,58,237,0.1) 0%, transparent 60%); }
+    .auth-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2.5rem; width:100%; max-width:440px; position:relative; z-index:1; }
+    .auth-tabs { display:flex; gap:0; margin-bottom:2rem; background:var(--surface2); border-radius:8px; padding:4px; }
+    .auth-tab { flex:1; text-align:center; padding:0.6rem; border-radius:6px; cursor:pointer; font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; color:var(--muted); transition:all 0.2s; }
+    .auth-tab.active { background:var(--accent); color:#fff; }
+    .form-group { margin-bottom:1.2rem; }
+    .form-label { font-size:0.85rem; color:var(--muted); margin-bottom:0.4rem; display:block; font-weight:500; }
+    .form-control-dark { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:0.7rem 1rem; border-radius:8px; outline:none; font-family:'DM Sans',sans-serif; transition:border-color 0.2s; }
+    .form-control-dark:focus { border-color:var(--accent); }
+    .form-control-dark::placeholder { color:var(--muted); }
+    .btn-accent { background:var(--accent); color:#fff; font-weight:700; border:none; padding:0.75rem; border-radius:8px; font-family:'Syne',sans-serif; width:100%; font-size:1rem; transition:transform 0.2s,box-shadow 0.2s; cursor:pointer; }
+    .btn-accent:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(124,58,237,0.4); }
+    .divider { display:flex; align-items:center; gap:1rem; margin:1.5rem 0; color:var(--muted); font-size:0.85rem; }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .pass-wrap { position:relative; }
+    .pass-toggle { position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); cursor:pointer; background:none; border:none; }
+    .toast-msg { position:fixed; bottom:2rem; right:2rem; background:var(--accent); color:#fff; padding:1rem 1.5rem; border-radius:8px; font-weight:700; font-family:'Syne',sans-serif; display:none; z-index:9999; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a class="navbar-brand" href="quiz_index.html">Quiz<span>Craft</span></a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" id="registerTab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <h2 style="font-size:1.4rem;margin-bottom:0.3rem;">Welcome back 👋</h2>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;">Login to create and take quizzes</p>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-control-dark" id="loginEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="pass-wrap">
+          <input type="password" class="form-control-dark" id="loginPassword" placeholder="Enter password"/>
+          <button class="pass-toggle" onclick="togglePass('loginPassword')"><i class="bi bi-eye"></i></button>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-3" style="font-size:0.85rem;">
+        <label style="color:var(--muted);cursor:pointer;"><input type="checkbox" style="accent-color:var(--accent);margin-right:6px;">Remember me</label>
+        <a href="#" style="color:var(--accent);text-decoration:none;">Forgot password?</a>
+      </div>
+      <button class="btn-accent" onclick="handleLogin()">Login to QuizCraft</button>
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--muted);">Don't have an account? <a href="#" onclick="switchTab('register')" style="color:var(--accent);text-decoration:none;">Register here</a></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" style="display:none;">
+      <h2 style="font-size:1.4rem;margin-bottom:0.3rem;">Create Account ✨</h2>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;">Join QuizCraft and start learning</p>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-control-dark" id="regName" placeholder="John Doe"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-control-dark" id="regEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="pass-wrap">
+          <input type="password" class="form-control-dark" id="regPassword" placeholder="Min. 8 characters"/>
+          <button class="pass-toggle" onclick="togglePass('regPassword')"><i class="bi bi-eye"></i></button>
+        </div>
+      </div>
+      <button class="btn-accent" onclick="handleRegister()">Create Account</button>
+      <div class="divider">or</div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--muted);">Already have an account? <a href="#" onclick="switchTab('login')" style="color:var(--accent);text-decoration:none;">Login here</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function switchTab(tab) {
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+}
+function togglePass(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  if (!email || !pass) { showToast('⚠️ Please fill all fields!'); return; }
+  if (!email.includes('@')) { showToast('⚠️ Invalid email!'); return; }
+  showToast('✅ Login successful! Redirecting...');
+  setTimeout(() => { window.location = 'quiz_listing.html'; }, 1500);
+}
+function handleRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPassword').value;
+  if (!name || !email || !pass) { showToast('⚠️ Please fill all fields!'); return; }
+  if (!email.includes('@')) { showToast('⚠️ Invalid email!'); return; }
+  if (pass.length < 8) { showToast('⚠️ Password must be 8+ characters!'); return; }
+  showToast('🎉 Account created! Redirecting...');
+  setTimeout(() => { window.location = 'quiz_listing.html'; }, 1500);
+}
+</script>
+</body>
+</html>
